@@ -1,0 +1,7 @@
+examples/
+build/
+.vscode/
+
+*.gch
+a.out
+CMakeLists.txt
