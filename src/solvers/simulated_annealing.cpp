@@ -5,7 +5,7 @@ SimulatedAnnealingSolver::SimulatedAnnealingSolver(Cipher *ci, Keyspace<ivec*> *
     : HillClimbSolver(ci, ks, s)
     { name = "Simulated annealing"; }
 
-bool SimulatedAnnealingSolver::selectionFunction(double best_score, double score, int itr) {
+int SimulatedAnnealingSolver::selectionFunction(double overall_best_score, double best_score, double score, int itr) {
     auto T = [this] (uint32_t time) {
         return start_temp - (cooling_rate * (double)time);
     };
@@ -15,7 +15,9 @@ bool SimulatedAnnealingSolver::selectionFunction(double best_score, double score
         if (t <= 0) return 0.0;
         return RAND_MAX * exp((e0 - e1) / t);
     };
-
+    
+    if (score > overall_best_score)
+        return 2;
     return P(score, best_score, T(itr)) > rand();
 }
 

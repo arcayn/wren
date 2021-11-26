@@ -36,7 +36,7 @@ class BruteForceSolver : public Solver<ivec*, ivec*> {
 class HillClimbSolver : public Solver<ivec*, ivec*> {
     protected:
         string name = "Hill climb";
-        virtual bool selectionFunction(double best_score, double score, int itr);
+        virtual int selectionFunction(double overall_best_score, double best_score, double score, int itr);
 
     public:
         using Solver::solve;
@@ -46,9 +46,9 @@ class HillClimbSolver : public Solver<ivec*, ivec*> {
 
 class SimulatedAnnealingSolver : public HillClimbSolver {
     protected:
-        double start_temp = 20;
-        double cooling_rate = 0.0001;
-        virtual bool selectionFunction(double best_score, double score, int itr) override;
+        double start_temp = 15;
+        double cooling_rate = 0.00002;
+        virtual int selectionFunction(double overall_best_score, double best_score, double score, int itr) override;
 
     public:
         using HillClimbSolver::solve;
