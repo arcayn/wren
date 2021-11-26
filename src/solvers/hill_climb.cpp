@@ -8,12 +8,16 @@ HillClimbSolver::HillClimbSolver(Cipher *ci, Keyspace<ivec*> *ks, Scorer *s)
         scorer = s;
     }
 
+bool HillClimbSolver::selectionFunction(double best_score, double score, int itr) {
+    return score > best_score;
+}
+
 /* NOTE: if cond is set to NULL, this function will never return */
 ivec *HillClimbSolver::solve(ivec* ct, struct conditions<ivec*>* cond) {
     bool exit_on_itr_count = cond != NULL && cond->iter_count > 0;
     bool exit_on_score = cond != NULL && cond->score > -__DBL_MAX__;
 
-    msg_inf("Beginning hill-climb solve...");
+    msg_inf("Beginning " + name + " solve...");
     
     keyspace->resetState();
     keyspace->nextState();
@@ -37,7 +41,7 @@ ivec *HillClimbSolver::solve(ivec* ct, struct conditions<ivec*>* cond) {
         temp_plaintext.clear();
         cipherInstance->decrypt(ct, &temp_plaintext);
         temp_score = scorer->scoreCTO(&temp_plaintext);
-        if (temp_score > best_score) {
+        if (selectionFunction(best_score, temp_score, itr_count)) {
             best_plaintext = ivec(temp_plaintext);
             best_score = temp_score;
             
@@ -56,7 +60,7 @@ ivec *HillClimbSolver::solve(ivec* ct, struct conditions<ivec*>* cond) {
         }
         itr_count++;
     }
-    msg_pos("Hill Climb solve finished!");
+    msg_pos(name + " solve finished!");
     msg_pos("Best fitness: " + to_string(best_score));
     msg_pos("Best plaintext: " + convertToEnglish(&best_plaintext));
     return new ivec(best_key);
